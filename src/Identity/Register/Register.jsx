@@ -35,15 +35,19 @@ const Register = () => {
     const form = e.target;
     const name = form.name.value;
     const email = form.email.value;
+    const role = form.role.value;
     const password = form.password.value;
-    const userInfo = { name, password, email, imageUrl }; // Include imageUrl in userInfo
+    const userInfo = { name, password, email, imageUrl, role }; // Include imageUrl in userInfo
 
     console.log(userInfo);
     axios
       .post("http://localhost:5000/user", userInfo)
       .then((res) => {
         console.log(res);
-        toast.success("Registration Success");
+        const { token } = res.data;
+        // Store the token and user data
+        localStorage.setItem("token", token);
+        toast.success("Registration Successful");
         if (res) {
           setTimeout(() => {
             navigate("/");
@@ -57,7 +61,7 @@ const Register = () => {
   };
 
   return (
-    <div className="lg:p-36 lg:bg-pink-700 flex justify-center">
+    <div className="lg:p-32 lg:bg-pink-700 flex justify-center">
       <ToastContainer />
       <div className="lg:w-[700px] border border-gray-800 flex flex-col items-center justify-center bg-pink-500 text-white">
         {/* Header */}
@@ -95,6 +99,19 @@ const Register = () => {
                   id="name"
                   placeholder="আপনার পূর্ণ নাম"
                 />
+              </div>
+              <div className="flex flex-col mb-4">
+                <label className="mb-2 font-bold text-lg" htmlFor="role">
+                  ইউজার/এজেন্ট
+                </label>
+                <select
+                  className="border border-gray-500 p-2 rounded"
+                  name="role"
+                  id="role"
+                >
+                  <option value="user">ইউজার</option>
+                  <option value="agent">এজেন্ট</option>
+                </select>
               </div>
               <div className="flex flex-col mb-4">
                 <label className="mb-2 font-bold text-lg" htmlFor="email">
@@ -138,8 +155,8 @@ const Register = () => {
                   <img
                     src={imageUrl}
                     alt="Uploaded"
-                    className="mt-2 rounded-md"
-                    style={{ maxWidth: "200px", maxHeight: "200px" }}
+                    className="mt-2 rounded-2xl"
+                    style={{ maxWidth: "100px", maxHeight: "100px" }}
                   />
                 )}
               </div>

@@ -1,4 +1,7 @@
-import React, { useState } from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import bcrypt from "bcryptjs"; // Make sure bcrypt.js is installed and imported
+
 
 const CashOut = () => {
   const [amount, setAmount] = useState("");
@@ -6,9 +9,32 @@ const CashOut = () => {
   const [agentNumber, setAgentNumber] = useState("");
   const [error, setError] = useState("");
   const [balance, setBalance] = useState(1000); // Example balance, you can set it dynamically
-  const [agentBalance, setAgentBalance] = useState(500); // Example agent balance
+  const [agentBalance, setAgentBalance] = useState(500);
+  const [user, setUser] = useState(null);
+  const [token, setToken] = useState();
 
-  const handleSubmit = (e) => {
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    if (storedToken) {
+      setToken(storedToken);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (token) {
+      axios
+        .get(`http://localhost:5000/userInfo/${token}`)
+        .then((res) => {
+          setUser(res.data);
+          setBalance(res.data?.Balance);
+        })
+        .catch((error) => {
+          console.error("Error fetching user info:", error);
+        });
+    }
+  }, [token]);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const amountNumber = parseFloat(amount);
@@ -33,6 +59,12 @@ const CashOut = () => {
       return;
     }
 
+    const matchPin = await bcrypt.compare(pin, user?.password);
+    if (!matchPin) {
+      setError("Pin Invalid");
+      return;
+    }
+
     // Calculate the fee (1.5% of the transaction amount)
     const fee = amountNumber * 0.015;
     const totalDeduction = amountNumber + fee;
@@ -43,28 +75,49 @@ const CashOut = () => {
     }
 
     // Deduct the amount and fee from user's balance and add to agent's balance
-    setBalance(balance - totalDeduction);
-    setAgentBalance(agentBalance + totalDeduction);
+    const updatedBalance = balance - totalDeduction;
+    const updatedAgentBalance = agentBalance + amountNumber;
 
-    // Here you would include the logic for cashing out
-    // Including JWT and pin verification
+    setBalance(updatedBalance);
+    setAgentBalance(updatedAgentBalance);
 
-    console.log("Cashing Out", {
-      amount: amountNumber,
-      pin,
-      fee,
-      totalDeduction,
+    // Data to be sent to the database
+    const transactionData = {
+      userId: user?.id,
+      token,
+      name: user?.name,
+      Date: new Date(),
+      image: user?.imageUrl,
       agentNumber,
-    });
+      amount: amountNumber,
+      fee,
+      Method: 'Cash Out',
+      totalDeduction,
+      updatedBalance,
+      updatedAgentBalance,
+    };
 
-    setError("");
-    alert(
-      `Cash Out Successful! Amount: ৳${amountNumber}, Fee: ৳${fee.toFixed(
-        2
-      )}, Total Deducted: ৳${totalDeduction.toFixed(2)}`
-    );
+    // Send the transaction data to the database
+    axios
+      .post("http://localhost:5000/payment", transactionData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        console.log("Transaction successful", response.data);
+        setError("");
+        alert(
+          `Cash Out Successful! Amount: ৳${amountNumber}, Fee: ৳${fee.toFixed(
+            2
+          )}, Total Deducted: ৳${totalDeduction.toFixed(2)}`
+        );
+      })
+      .catch((error) => {
+        console.error("Error processing transaction:", error);
+        setError("Transaction failed. Please try again.");
+      });
   };
-  
 
   return (
     <div className="flex justify-center items-center h-screen bg-pink-200">

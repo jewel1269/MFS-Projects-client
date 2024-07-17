@@ -4,6 +4,7 @@ import LogIn from "../Identity/LogIn/LogIn";
 import Register from "../Identity/Register/Register";
 import SendMoney from "../Component/SendMoney/SendMoney";
 import CashOut from "../Component/CashOut/CashOut";
+import TransactionList from "../Component/TransactionList/TransactionList";
 
 export const router = createBrowserRouter([
   {
@@ -25,5 +26,9 @@ export const router = createBrowserRouter([
   {
     path: "CashOut",
     element: <CashOut />,
+  },
+  {
+    path: "TransactionList",
+    element: <TransactionList />,
   },
 ]);

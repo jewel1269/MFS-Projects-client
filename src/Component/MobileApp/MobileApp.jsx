@@ -24,13 +24,16 @@ const MobileApp = () => {
     }, []);
     console.log(token);
 
+
+
+
      const toggleBalance = () => {
        setShowBalance(!showBalance);
      };
 
     useEffect(() => {
       axios
-        .get(`http://localhost:5000/userInfo/${token}`)
+        .get(`http://localhost:5000/userInfo/${token || ''}`)
         .then((res) => {
           setUser(res.data);
         })
@@ -63,7 +66,7 @@ const MobileApp = () => {
                   onClick={toggleBalance}
                   className="text-sm bg-white text-pink-500 px-2 py-1 rounded"
                 >
-                  {showBalance ? "Balance: 5000 BDT" : "ব্যালেন্স জানতে চাপুন"}
+                  {showBalance ? `Balance: ${user?.Balance} BDT` : "ব্যালেন্স জানতে চাপুন"}
                 </button>
               </div>
             </div>

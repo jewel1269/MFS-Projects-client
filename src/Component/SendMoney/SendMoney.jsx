@@ -1,13 +1,39 @@
-import React, { useState } from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import bcrypt from "bcryptjs";
+
 
 const SendMoney = () => {
   const [amount, setAmount] = useState("");
   const [pin, setPin] = useState("");
   const [error, setError] = useState("");
   const [balance, setBalance] = useState(1000);
-    const [personalNumber, setPersonalNumber] = useState(""); // Example balance, you can set it dynamically
+  const [personalNumber, setPersonalNumber] = useState("");
+  const [user, setUser] = useState(null);
+  const [token, setToken] = useState();
 
-  const handleSubmit = (e) => {
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    if (storedToken) {
+      setToken(storedToken);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (token) {
+      axios
+        .get(`http://localhost:5000/userInfo/${token}`)
+        .then((res) => {
+          setUser(res.data);
+          setBalance(res.data?.Balance);
+        })
+        .catch((error) => {
+          console.error("Error fetching user info:", error);
+        });
+    }
+  }, [token]);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const amountNumber = parseFloat(amount);
@@ -27,24 +53,52 @@ const SendMoney = () => {
       return;
     }
 
-    // Apply a fee of 5 Taka for transactions over 100 Taka
-    const fee = amountNumber > 100 ? 5 : 0;
-    const totalAmount = amountNumber + fee;
+    try {
+      const matchPin = await bcrypt.compare(pin, user?.password);
+      if (!matchPin) {
+        setError("Pin Invalid");
+        return;
+      }
 
-    // Here you would include the logic for sending the money
-    // Including JWT and pin verification
+      // Apply a fee of 5 Taka for transactions over 100 Taka
+      const fee = amountNumber > 100 ? 5 : 0;
+      const totalAmount = amountNumber + fee;
 
-    console.log("Sending Money", {
-      amount: amountNumber,
-      pin,
-      fee,
-      totalAmount,
-    });
+      
+      // Sending data to the backend after successful transaction
+      axios
+        .post("http://localhost:5000/payment", {
+          personalNumber,
+          amount: amountNumber,
+          fee,
+          Method: "Send Money",
+          totalAmount,
+          userId: user._id,
+          token: user?.token,
+          name: user?.name,
+          Date: new Date(),
+          image: user?.imageUrl,
 
-    setError("");
-    alert(
-      `Transaction Successful! Amount: ৳${amountNumber}, Fee: ৳${fee}, Total Deducted: ৳${totalAmount}`
-    );
+        })
+        .then((response) => {
+          console.log("Transaction data sent to backend:", response.data);
+        })
+        .catch((error) => {
+          console.error("Error sending transaction data:", error);
+        });
+
+      alert(
+        `Transaction Successful! Amount: ৳${amountNumber}, Fee: ৳${fee}, Total Deducted: ৳${totalAmount}`
+      );
+
+      setError("");
+      setAmount("");
+      setPin("");
+      setPersonalNumber("");
+    } catch (error) {
+      console.error("Error comparing pin:", error);
+      setError("An error occurred. Please try again.");
+    }
   };
 
   return (
@@ -58,7 +112,7 @@ const SendMoney = () => {
           <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center text-2xl">
             👤
           </div>
-          <div className="ml-4 text-lg">Shuvo</div>
+          <div className="ml-4 text-lg">{user?.name}</div>
         </div>
 
         <form onSubmit={handleSubmit}>

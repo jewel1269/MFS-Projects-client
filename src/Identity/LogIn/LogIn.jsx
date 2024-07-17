@@ -23,10 +23,7 @@ const LogIn = () => {
      axios
        .post("http://localhost:5000/loginUser", logInfo)
        .then((res) => {
-         const { token, user } = res.data;
-         // Store the token and user data
-         localStorage.setItem("token", token);
-         localStorage.setItem("user", JSON.stringify(user));
+console.log(res)
          toast.success("Login Success");
          setTimeout(() => {
            navigate("/root"); 
