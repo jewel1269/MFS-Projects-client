@@ -11,18 +11,18 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 const MobileApp = () => {
     const [user, setUser] = useState(null);
-    const [token, setToken]= useState()
+    const [email, setEmail]= useState()
      const [showBalance, setShowBalance] = useState(false);
    
    
 
     useEffect(() => {
-      const storedToken = localStorage.getItem("token");
+      const storedToken = localStorage.getItem("email");
       if (storedToken) {
-        setToken(storedToken);
+        setEmail(storedToken);
       }
     }, []);
-    console.log(token);
+    console.log(email);
 
 
 
@@ -33,14 +33,14 @@ const MobileApp = () => {
 
     useEffect(() => {
       axios
-        .get(`http://localhost:5000/userInfo/${token || ''}`)
+        .get(`http://localhost:5000/userInfo/${email || ''}`)
         .then((res) => {
           setUser(res.data);
         })
         .catch((error) => {
           console.error("Error fetching user info:", error);
         });
-    }, [token]);
+    }, [email]);
 
     console.log("jewel", user);
 

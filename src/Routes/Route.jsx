@@ -5,6 +5,7 @@ import Register from "../Identity/Register/Register";
 import SendMoney from "../Component/SendMoney/SendMoney";
 import CashOut from "../Component/CashOut/CashOut";
 import TransactionList from "../Component/TransactionList/TransactionList";
+import UserManagement from "../Component/Admin/UserTable/UserTable";
 
 export const router = createBrowserRouter([
   {
@@ -31,4 +32,9 @@ export const router = createBrowserRouter([
     path: "TransactionList",
     element: <TransactionList />,
   },
+  {
+    path: "UserManagement",
+    element: <UserManagement />,
+  },
 ]);
+

@@ -10,28 +10,28 @@ const SendMoney = () => {
   const [balance, setBalance] = useState(1000);
   const [personalNumber, setPersonalNumber] = useState("");
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState();
+  const [email, setEmail] = useState();
 
   useEffect(() => {
-    const storedToken = localStorage.getItem("token");
+    const storedToken = localStorage.getItem("email");
     if (storedToken) {
-      setToken(storedToken);
+      setEmail(storedToken);
     }
   }, []);
+  console.log(email);
 
   useEffect(() => {
-    if (token) {
-      axios
-        .get(`http://localhost:5000/userInfo/${token}`)
-        .then((res) => {
-          setUser(res.data);
-          setBalance(res.data?.Balance);
-        })
-        .catch((error) => {
-          console.error("Error fetching user info:", error);
-        });
-    }
-  }, [token]);
+    axios
+      .get(`http://localhost:5000/userInfo/${email || ""}`)
+      .then((res) => {
+        setUser(res.data);
+        setBalance(res.data.Balance)
+      })
+      .catch((error) => {
+        console.error("Error fetching user info:", error);
+      });
+  }, [email]);
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();

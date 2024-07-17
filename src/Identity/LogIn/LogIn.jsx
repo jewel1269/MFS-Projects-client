@@ -24,6 +24,7 @@ const LogIn = () => {
        .post("http://localhost:5000/loginUser", logInfo)
        .then((res) => {
 console.log(res)
+ localStorage.setItem("email", email);
          toast.success("Login Success");
          setTimeout(() => {
            navigate("/root"); 

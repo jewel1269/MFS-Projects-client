@@ -44,9 +44,9 @@ const Register = () => {
       .post("http://localhost:5000/user", userInfo)
       .then((res) => {
         console.log(res);
-        const { token } = res.data;
+     
         // Store the token and user data
-        localStorage.setItem("token", token);
+        localStorage.setItem("email", email);
         toast.success("Registration Successful");
         if (res) {
           setTimeout(() => {

@@ -4,27 +4,27 @@ import { NavLink } from "react-router-dom";
 
 const Navber = () => {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState();
+  const [email, setEmail] = useState();
 
   useEffect(() => {
-    const storedToken = localStorage.getItem("token");
+    const storedToken = localStorage.getItem("email");
     if (storedToken) {
-      setToken(storedToken);
+      setEmail(storedToken);
     }
   }, []);
+  console.log(email);
 
   useEffect(() => {
-    if (token) {
-      axios
-        .get(`http://localhost:5000/userInfo/${token}`)
-        .then((res) => {
-          setUser(res.data);
-        })
-        .catch((error) => {
-          console.error("Error fetching user info:", error);
-        });
-    }
-  }, [token]);
+    axios
+      .get(`http://localhost:5000/userInfo/${email || ""}`)
+      .then((res) => {
+        setUser(res.data);
+        
+      })
+      .catch((error) => {
+        console.error("Error fetching user info:", error);
+      });
+  }, [email]);
 
   return (
     <div className="fixed z-40 lg:mt-5 opacity-100 bottom-0 left-0 right-0 bg-pink-700 text-white p-4 flex justify-around">
