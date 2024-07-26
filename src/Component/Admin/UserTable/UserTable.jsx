@@ -7,7 +7,7 @@ const UserManagement = () => {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:5000/alluser").then((res) => {
+    axios.get("https://ph-task-lake.vercel.app/alluser").then((res) => {
       setUsers(res.data);
     });
   }, []);

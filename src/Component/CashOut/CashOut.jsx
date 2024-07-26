@@ -23,7 +23,7 @@ const CashOut = () => {
 
  useEffect(() => {
    axios
-     .get(`http://localhost:5000/userInfo/${email || ""}`)
+     .get(`https://ph-task-lake.vercel.app/userInfo/${email || ""}`)
      .then((res) => {
        setUser(res.data);
        setBalance(res.data.Balance);
@@ -98,7 +98,7 @@ const CashOut = () => {
 
     // Send the transaction data to the database
     axios
-      .post("http://localhost:5000/payment", transactionData, {
+      .post("https://ph-task-lake.vercel.app/payment", transactionData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

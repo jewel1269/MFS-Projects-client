@@ -33,7 +33,7 @@ const MobileApp = () => {
 
     useEffect(() => {
       axios
-        .get(`http://localhost:5000/userInfo/${email || ''}`)
+        .get(`https://ph-task-lake.vercel.app/userInfo/${email || ''}`)
         .then((res) => {
           setUser(res.data);
         })

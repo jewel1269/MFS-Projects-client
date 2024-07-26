@@ -21,7 +21,7 @@ const LogIn = () => {
     console.log(logInfo);
 
      axios
-       .post("http://localhost:5000/loginUser", logInfo)
+       .post("https://ph-task-lake.vercel.app/loginUser", logInfo)
        .then((res) => {
 console.log(res)
  localStorage.setItem("email", email);

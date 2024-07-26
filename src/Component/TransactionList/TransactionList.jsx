@@ -17,7 +17,7 @@ const TransactionList = () => {
   useEffect(() => {
     if (token) {
       axios
-        .get(`http://localhost:5000/payHistory/${token}`)
+        .get(`https://ph-task-lake.vercel.app/payHistory/${token}`)
         .then((res) => {
           setHistorys(res.data);
         })

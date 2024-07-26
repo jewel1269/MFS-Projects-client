@@ -41,7 +41,7 @@ const Register = () => {
 
     console.log(userInfo);
     axios
-      .post("http://localhost:5000/user", userInfo)
+      .post("https://ph-task-lake.vercel.app/user", userInfo)
       .then((res) => {
         console.log(res);
      

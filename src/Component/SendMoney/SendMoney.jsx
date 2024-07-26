@@ -22,7 +22,7 @@ const SendMoney = () => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:5000/userInfo/${email || ""}`)
+      .get(`https://ph-task-lake.vercel.app/userInfo/${email || ""}`)
       .then((res) => {
         setUser(res.data);
         setBalance(res.data.Balance)
@@ -67,7 +67,7 @@ const SendMoney = () => {
       
       // Sending data to the backend after successful transaction
       axios
-        .post("http://localhost:5000/payment", {
+        .post("https://ph-task-lake.vercel.app/payment", {
           personalNumber,
           amount: amountNumber,
           fee,
